@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Dossier du projet
-DIR="/home/soufiane/Desktop/Pomodoro"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 PORT=8080
 
 cd "$DIR" || exit
