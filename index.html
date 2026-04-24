@@ -10,6 +10,10 @@
         body {
             font-family: 'JetBrains Mono', monospace;
         }
+        :root {
+            --color-work: #E6E6FA; /* Lavender */
+            --color-break: #98FF98; /* Mint */
+        }
         /* Custom scrollbar for number inputs */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
@@ -30,14 +34,52 @@
             background-position: right .7em top 50%, 0 0;
             background-size: .65em auto, 100%;
         }
+        /* Fullscreen Mode */
+        body.fullscreen-mode {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        body.fullscreen-mode #video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            max-width: none;
+            aspect-ratio: auto;
+            margin: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+        body.fullscreen-mode #video-player {
+            border-radius: 0;
+        }
+        body.fullscreen-mode #timer-app {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            margin: 0;
+            transform: scale(0.8);
+            transform-origin: bottom right;
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(12px);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+        body.fullscreen-mode #settings-section,
+        body.fullscreen-mode #todo-section,
+        body.fullscreen-mode #stats-btn {
+            display: none !important;
+            opacity: 0;
+        }
     </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        lavender: '#E6E6FA',
-                        mint: '#98FF98',
+                        lavender: 'var(--color-work)',
+                        mint: 'var(--color-break)',
                     }
                 }
             }
@@ -47,7 +89,7 @@
 <body class="bg-[#1e1e1e] text-white min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-500" id="body">
 
     <!-- Lofi Girl Video -->
-    <div class="w-full max-w-2xl aspect-video mb-8">
+    <div id="video-container" class="w-full max-w-2xl aspect-video mb-8 transition-all duration-700 z-0">
         <iframe id="video-player" class="w-full h-full rounded-2xl shadow-lg shadow-black/50 transition-opacity duration-500" 
             src="https://www.youtube.com/embed/OS8lnKZdJYc?autoplay=1&mute=1" 
             title="Lofi Girl" frameborder="0" 
@@ -57,7 +99,21 @@
     </div>
 
     <!-- Timer App -->
-    <div class="w-full max-w-md bg-[#2a2a2a] rounded-3xl p-8 shadow-2xl border border-[#3d3d3d] flex flex-col items-center">
+    <div id="timer-app" class="w-full max-w-md bg-[#2a2a2a] rounded-3xl p-8 shadow-2xl border border-[#3d3d3d] flex flex-col items-center relative transition-all duration-500 z-10">
+        
+        <!-- Fullscreen Button -->
+        <button id="fullscreen-btn" class="absolute top-6 left-6 text-[#a1a1aa] hover:text-white transition-colors" title="Mode Immersif">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
+        </button>
+
+        <!-- Stats Button -->
+        <button id="stats-btn" class="absolute top-6 right-6 text-[#a1a1aa] hover:text-white transition-colors" title="Statistiques">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+        </button>
         
         <!-- Status Indicator -->
         <div id="status" class="text-xl font-bold mb-4 text-lavender uppercase tracking-widest transition-colors duration-300">
@@ -77,7 +133,7 @@
         </div>
 
         <!-- Settings -->
-        <div class="w-full border-t border-[#3d3d3d] pt-6 flex flex-col gap-6">
+        <div id="settings-section" class="w-full border-t border-[#3d3d3d] pt-6 flex flex-col gap-6 transition-all duration-300">
             
             <!-- Video Selector -->
             <div class="flex flex-col w-full">
@@ -100,6 +156,27 @@
                 </select>
             </div>
 
+            <!-- Customization (Theme & Sound) -->
+            <div class="w-full flex justify-between gap-6">
+                <div class="flex flex-col w-1/2">
+                    <label for="theme-select" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider text-center">Thème</label>
+                    <select id="theme-select" class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-sm font-bold text-lavender focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all cursor-pointer text-center truncate">
+                        <option value="lavender">Lavande & Menthe</option>
+                        <option value="peach">Pêche & Océan</option>
+                        <option value="neon">Néon Rose & Cyan</option>
+                        <option value="coffee">Café & Caramel</option>
+                    </select>
+                </div>
+                <div class="flex flex-col w-1/2">
+                    <label for="sound-select" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider text-center">Son</label>
+                    <select id="sound-select" class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-sm font-bold text-mint focus:outline-none focus:border-mint focus:ring-1 focus:ring-mint transition-all cursor-pointer text-center truncate">
+                        <option value="beep">Bip Doux</option>
+                        <option value="bowl">Bol Tibétain</option>
+                        <option value="drop">Goutte d'eau</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Time Inputs -->
             <div class="w-full flex justify-between gap-6">
                 <div class="flex flex-col items-center w-1/2">
@@ -113,8 +190,61 @@
                         class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-xl font-bold text-mint focus:outline-none focus:border-mint focus:ring-1 focus:ring-mint transition-all">
                 </div>
             </div>
+            
+            <!-- Tasks List -->
+            <div id="todo-section" class="w-full border-t border-[#3d3d3d] pt-6 flex flex-col gap-4 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider">Tâches</div>
+                    <div id="active-task-display" class="text-xs font-bold text-lavender max-w-[180px] truncate hidden" title="Tâche en cours"></div>
+                </div>
+                
+                <form id="todo-form" class="flex gap-2">
+                    <input type="text" id="todo-input" placeholder="Ajouter une tâche..." autocomplete="off"
+                        class="flex-1 bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl px-4 py-3 text-sm font-bold text-white placeholder-[#a1a1aa] focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
+                    <button type="submit" class="px-4 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-xl font-bold transition-colors flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </form>
+                
+                <ul id="todo-list" class="flex flex-col gap-2 max-h-36 overflow-y-auto pr-1 space-y-1">
+                    <!-- Tasks will be rendered here -->
+                </ul>
+            </div>
         </div>
 
+    </div>
+
+    <!-- Statistics Modal -->
+    <div id="stats-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+        <div class="bg-[#2a2a2a] rounded-3xl p-8 shadow-2xl border border-[#3d3d3d] w-full max-w-lg mx-4 relative transform scale-95 transition-transform duration-300" id="stats-modal-content">
+            <button id="close-stats-btn" class="absolute top-6 right-6 text-[#a1a1aa] hover:text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-white text-center tracking-wide">Statistiques</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-[#1e1e1e] rounded-2xl p-4 border border-[#3d3d3d] flex flex-col items-center justify-center">
+                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1">Temps Total</div>
+                    <div id="total-time-stat" class="text-3xl font-bold text-lavender">0m</div>
+                </div>
+                <div class="bg-[#1e1e1e] rounded-2xl p-4 border border-[#3d3d3d] flex flex-col items-center justify-center">
+                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1">Cycles Complétés</div>
+                    <div id="total-cycles-stat" class="text-3xl font-bold text-mint">0</div>
+                </div>
+            </div>
+
+            <h3 class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-4 text-center">Cette semaine</h3>
+            <div class="flex items-end justify-between h-40 gap-2 px-2" id="chart-container">
+                <!-- Bars -->
+            </div>
+            <div class="flex items-end justify-between gap-2 px-2 mt-2 text-xs text-[#a1a1aa] font-bold" id="chart-labels">
+                <!-- Labels -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -128,12 +258,39 @@
         const breakInput = document.getElementById('break-time');
         const videoSelect = document.getElementById('video-select');
         const videoPlayer = document.getElementById('video-player');
+        const themeSelect = document.getElementById('theme-select');
+        const soundSelect = document.getElementById('sound-select');
+        
+        // Todo DOM Elements
+        const todoForm = document.getElementById('todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const todoList = document.getElementById('todo-list');
+        const activeTaskDisplay = document.getElementById('active-task-display');
 
         // State variables
         let interval;
         let isRunning = false;
         let isWorkMode = true; // true = work, false = break
         let secondsRemaining = 25 * 60;
+        let tasks = JSON.parse(localStorage.getItem('pomodoroTasks')) || [];
+        let activeTaskId = localStorage.getItem('pomodoroActiveTaskId') || null;
+
+        const updateTheme = (themeName) => {
+            const root = document.documentElement;
+            if (themeName === 'peach') {
+                root.style.setProperty('--color-work', '#FFCBA4'); // Peach
+                root.style.setProperty('--color-break', '#00BFFF'); // Ocean
+            } else if (themeName === 'neon') {
+                root.style.setProperty('--color-work', '#FF6EC7'); // Neon Pink
+                root.style.setProperty('--color-break', '#00FFFF'); // Cyan
+            } else if (themeName === 'coffee') {
+                root.style.setProperty('--color-work', '#D2B48C'); // Latte
+                root.style.setProperty('--color-break', '#F5DEB3'); // Caramel
+            } else {
+                root.style.setProperty('--color-work', '#E6E6FA'); // Lavender
+                root.style.setProperty('--color-break', '#98FF98'); // Mint
+            }
+        };
 
         // Generate synthetic beep using Web Audio API (no external asset needed)
         const playBeep = () => {
@@ -147,17 +304,39 @@
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 
-                // Calm sine wave tone
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.5);
-                
-                // Fade out to avoid clicks
-                gain.gain.setValueAtTime(0.5, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.5);
+                const soundType = soundSelect.value || 'beep';
+                const now = ctx.currentTime;
+
+                if (soundType === 'bowl') {
+                    // Tibetan Bowl
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(200, now);
+                    osc.frequency.exponentialRampToValueAtTime(190, now + 3);
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(0.6, now + 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 3);
+                    osc.start(now);
+                    osc.stop(now + 3);
+                } else if (soundType === 'drop') {
+                    // Water Drop
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now);
+                    osc.frequency.exponentialRampToValueAtTime(2000, now + 0.1);
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.linearRampToValueAtTime(0.5, now + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else {
+                    // Soft Beep (Default)
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(300, now + 0.5);
+                    gain.gain.setValueAtTime(0.5, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                }
             } catch (e) {
                 console.error("Audio playback failed", e);
             }
@@ -168,6 +347,8 @@
             const savedWork = localStorage.getItem('pomodoroWorkTime');
             const savedBreak = localStorage.getItem('pomodoroBreakTime');
             const savedVideo = localStorage.getItem('pomodoroVideoId');
+            const savedTheme = localStorage.getItem('pomodoroThemeId');
+            const savedSound = localStorage.getItem('pomodoroSoundId');
             
             if (savedWork) workInput.value = savedWork;
             if (savedBreak) breakInput.value = savedBreak;
@@ -175,6 +356,15 @@
             if (savedVideo) {
                 videoSelect.value = savedVideo;
                 updateVideo(savedVideo);
+            }
+
+            if (savedTheme) {
+                themeSelect.value = savedTheme;
+                updateTheme(savedTheme);
+            }
+
+            if (savedSound) {
+                soundSelect.value = savedSound;
             }
             
             resetTimer();
@@ -185,6 +375,8 @@
             localStorage.setItem('pomodoroWorkTime', workInput.value);
             localStorage.setItem('pomodoroBreakTime', breakInput.value);
             localStorage.setItem('pomodoroVideoId', videoSelect.value);
+            localStorage.setItem('pomodoroThemeId', themeSelect.value);
+            localStorage.setItem('pomodoroSoundId', soundSelect.value);
         };
 
         // Update video iframe
@@ -296,8 +488,240 @@
             updateVideo(e.target.value);
         });
 
+        themeSelect.addEventListener('change', (e) => {
+            saveSettings();
+            updateTheme(e.target.value);
+        });
+
+        soundSelect.addEventListener('change', () => {
+            saveSettings();
+            playBeep(); // test the sound
+        });
+
+        // To-Do List Logic
+        const saveTasks = () => {
+            localStorage.setItem('pomodoroTasks', JSON.stringify(tasks));
+            localStorage.setItem('pomodoroActiveTaskId', activeTaskId || '');
+            updateActiveTaskDisplay();
+        };
+
+        const updateActiveTaskDisplay = () => {
+            if (activeTaskId) {
+                const activeTask = tasks.find(t => t.id === activeTaskId);
+                if (activeTask && !activeTask.completed) {
+                    activeTaskDisplay.textContent = "🎯 " + activeTask.text;
+                    activeTaskDisplay.classList.remove('hidden');
+                } else {
+                    activeTaskDisplay.classList.add('hidden');
+                    if (activeTask && activeTask.completed) {
+                        activeTaskId = null; // unset if completed
+                        saveTasks();
+                    }
+                }
+            } else {
+                activeTaskDisplay.classList.add('hidden');
+            }
+        };
+
+        const renderTasks = () => {
+            todoList.innerHTML = '';
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                const isActive = task.id === activeTaskId;
+                li.className = `group flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${task.completed ? 'bg-[#1e1e1e] opacity-60 border-[#3d3d3d]' : (isActive ? 'bg-[#3d3d3d] border-lavender' : 'bg-[#1e1e1e] border-[#3d3d3d] hover:bg-[#2a2a2a]')}`;
+                
+                // Left side: Checkbox + Text
+                const leftDiv = document.createElement('div');
+                leftDiv.className = 'flex items-center gap-3 overflow-hidden flex-1';
+                
+                const checkbox = document.createElement('div');
+                checkbox.className = `min-w-[1.25rem] min-h-[1.25rem] w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${task.completed ? 'bg-mint border-mint' : (isActive ? 'border-lavender' : 'border-[#a1a1aa] group-hover:border-lavender')}`;
+                if (task.completed) {
+                    checkbox.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-[#1e1e1e]" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>';
+                }
+                
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation(); // prevent activating the task
+                    task.completed = !task.completed;
+                    if (task.completed && isActive) activeTaskId = null;
+                    saveTasks();
+                    renderTasks();
+                });
+
+                const textSpan = document.createElement('span');
+                textSpan.className = `text-sm font-bold truncate transition-all ${task.completed ? 'text-[#a1a1aa] line-through' : 'text-white'}`;
+                textSpan.textContent = task.text;
+                
+                leftDiv.appendChild(checkbox);
+                leftDiv.appendChild(textSpan);
+                
+                // Right side: Delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'opacity-0 group-hover:opacity-100 text-[#a1a1aa] hover:text-[#ef4444] transition-all p-1';
+                deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>';
+                deleteBtn.title = "Supprimer";
+                
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    tasks = tasks.filter(t => t.id !== task.id);
+                    if (isActive) activeTaskId = null;
+                    saveTasks();
+                    renderTasks();
+                });
+
+                li.addEventListener('click', () => {
+                    if (!task.completed) {
+                        activeTaskId = isActive ? null : task.id;
+                        saveTasks();
+                        renderTasks();
+                    }
+                });
+
+                li.appendChild(leftDiv);
+                li.appendChild(deleteBtn);
+                todoList.appendChild(li);
+            });
+            updateActiveTaskDisplay();
+        };
+
+        todoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = todoInput.value.trim();
+            if (text) {
+                const newTask = {
+                    id: Date.now().toString(),
+                    text: text,
+                    completed: false
+                };
+                tasks.push(newTask);
+                
+                if (!activeTaskId) {
+                    activeTaskId = newTask.id;
+                }
+                
+                todoInput.value = '';
+                saveTasks();
+                renderTasks();
+                todoList.scrollTop = todoList.scrollHeight; // Scroll to bottom
+            }
+        });
+
+        // Fullscreen Logic
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', () => {
+                document.body.classList.toggle('fullscreen-mode');
+                // Request native fullscreen if possible
+                if (document.body.classList.contains('fullscreen-mode')) {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen().catch(err => console.log(err));
+                    }
+                } else {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen().catch(err => console.log(err));
+                    }
+                }
+            });
+        }
+
+        // Listen for native exit fullscreen to remove class
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.body.classList.remove('fullscreen-mode');
+            }
+        });
+
+        // Statistics Logic
+        const statsBtn = document.getElementById('stats-btn');
+        const closeStatsBtn = document.getElementById('close-stats-btn');
+        const statsModal = document.getElementById('stats-modal');
+        const statsModalContent = document.getElementById('stats-modal-content');
+        
+        const renderStats = () => {
+            const history = JSON.parse(localStorage.getItem('pomodoroHistory')) || {};
+            
+            let totalCycles = 0;
+            let totalDuration = 0;
+            for (const date in history) {
+                totalCycles += history[date].cycles;
+                totalDuration += history[date].duration;
+            }
+
+            const totalHours = Math.floor(totalDuration / 60);
+            const totalMins = totalDuration % 60;
+            document.getElementById('total-time-stat').textContent = totalHours > 0 ? `${totalHours}h ${totalMins}m` : `${totalMins}m`;
+            document.getElementById('total-cycles-stat').textContent = totalCycles;
+
+            const chartContainer = document.getElementById('chart-container');
+            const chartLabels = document.getElementById('chart-labels');
+            chartContainer.innerHTML = '';
+            chartLabels.innerHTML = '';
+
+            const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+            const last7Days = [];
+            const todayDate = new Date();
+            const todayStr = todayDate.getFullYear() + '-' + String(todayDate.getMonth() + 1).padStart(2, '0') + '-' + String(todayDate.getDate()).padStart(2, '0');
+            
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(todayDate.getDate() - i);
+                last7Days.push(d);
+            }
+
+            let maxDuration = 60; // minimum scale
+            const weekData = last7Days.map(date => {
+                const dateStr = date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                const dayDuration = history[dateStr] ? history[dateStr].duration : 0;
+                if (dayDuration > maxDuration) maxDuration = dayDuration;
+                return { dateStr, duration: dayDuration, dayName: days[date.getDay()] };
+            });
+
+            weekData.forEach(data => {
+                const heightPercent = (data.duration / maxDuration) * 100;
+                
+                const barWrapper = document.createElement('div');
+                barWrapper.className = 'w-full h-full flex flex-col justify-end items-center group relative';
+                
+                const tooltip = document.createElement('div');
+                tooltip.className = 'absolute -top-8 bg-[#3d3d3d] text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10 shadow-lg';
+                tooltip.textContent = data.duration > 60 ? `${Math.floor(data.duration/60)}h ${data.duration%60}m` : `${data.duration}m`;
+                
+                const bar = document.createElement('div');
+                const isToday = data.dateStr === todayStr;
+                bar.className = `w-full rounded-t-md transition-all duration-500 ${isToday ? 'bg-lavender' : 'bg-mint/60 hover:bg-mint/80'}`;
+                bar.style.height = `${Math.max(heightPercent, 5)}%`; 
+                
+                barWrapper.appendChild(tooltip);
+                barWrapper.appendChild(bar);
+                chartContainer.appendChild(barWrapper);
+
+                const label = document.createElement('div');
+                label.className = `w-full text-center truncate ${isToday ? 'text-lavender font-extrabold' : ''}`;
+                label.textContent = data.dayName;
+                chartLabels.appendChild(label);
+            });
+        };
+
+        const openStats = () => {
+            renderStats();
+            statsModal.classList.remove('opacity-0', 'pointer-events-none');
+            statsModalContent.classList.remove('scale-95');
+        };
+
+        const closeStats = () => {
+            statsModal.classList.add('opacity-0', 'pointer-events-none');
+            statsModalContent.classList.add('scale-95');
+        };
+
+        if(statsBtn) statsBtn.addEventListener('click', openStats);
+        if(closeStatsBtn) closeStatsBtn.addEventListener('click', closeStats);
+        if(statsModal) statsModal.addEventListener('click', (e) => {
+            if (e.target === statsModal) closeStats();
+        });
+
         // Initialize App
         loadSettings();
+        renderTasks();
     </script>
 </body>
 </html>
