@@ -1,0 +1,17 @@
+# Gemini CLI
+gemini.md
+.gemini/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python (for local server)
+__pycache__/
+*.py[cod]
+*$py.class
