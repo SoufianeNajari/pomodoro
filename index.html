@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25:00 - Travail | Lofi Pomodoro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        body {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar for number inputs */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        /* Custom select arrow styling */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a1a1aa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lavender: '#E6E6FA',
+                        mint: '#98FF98',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#1e1e1e] text-white min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-500" id="body">
+
+    <!-- Lofi Girl Video -->
+    <div class="w-full max-w-2xl aspect-video mb-8">
+        <iframe id="video-player" class="w-full h-full rounded-2xl shadow-lg shadow-black/50 transition-opacity duration-500" 
+            src="https://www.youtube.com/embed/OS8lnKZdJYc?autoplay=1&mute=1" 
+            title="Lofi Girl" frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <!-- Timer App -->
+    <div class="w-full max-w-md bg-[#2a2a2a] rounded-3xl p-8 shadow-2xl border border-[#3d3d3d] flex flex-col items-center">
+        
+        <!-- Status Indicator -->
+        <div id="status" class="text-xl font-bold mb-4 text-lavender uppercase tracking-widest transition-colors duration-300">
+            Travail
+        </div>
+
+        <!-- Timer Display -->
+        <div id="timer" class="text-7xl font-bold mb-8 text-white tracking-tighter">
+            25:00
+        </div>
+
+        <!-- Controls -->
+        <div class="flex gap-4 mb-8">
+            <button id="start-btn" class="px-6 py-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-full font-bold transition-colors">Start</button>
+            <button id="pause-btn" class="px-6 py-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-full font-bold transition-colors">Pause</button>
+            <button id="reset-btn" class="px-6 py-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-[#a1a1aa] rounded-full font-bold transition-colors">Reset</button>
+        </div>
+
+        <!-- Settings -->
+        <div class="w-full border-t border-[#3d3d3d] pt-6 flex flex-col gap-6">
+            
+            <!-- Video Selector -->
+            <div class="flex flex-col w-full">
+                <label for="video-select" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider text-center">Ambiance Vidéo</label>
+                <select id="video-select" class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-sm font-bold text-white focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all cursor-pointer">
+                    <optgroup label="🍅 25/5 (Cycles Courts)">
+                        <option value="OS8lnKZdJYc">Pluie à Shibuya (2h)</option>
+                        <option value="RJTcqnGPQME">Matinée dorée à Tokyo (2h)</option>
+                        <option value="z-j6jsLtgjs">Après-midi d'hiver paisible (3h)</option>
+                        <option value="MPTBT4-r4Fs">Coucher de soleil sur la côte (4h)</option>
+                        <option value="DXT9dF-WK-I">Soirée Pluvieuse & Lofi (2h)</option>
+                    </optgroup>
+                    <optgroup label="🍅 50/10 (Cycles Longs)">
+                        <option value="YdtBEFK_HgI">Nuit pluvieuse et Feu (2h)</option>
+                        <option value="XcoFHz5i8T0">Vue sur la Tokyo Tower (5h)</option>
+                        <option value="LjRygr4xR7g">Pluie intense Shibuya Crossing (6h)</option>
+                        <option value="XrEXSSCRw8w">Matinée d'été au Japon (3h)</option>
+                        <option value="86CFyZDqiAI">Vue nocturne de la ville (4h)</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <!-- Time Inputs -->
+            <div class="w-full flex justify-between gap-6">
+                <div class="flex flex-col items-center w-1/2">
+                    <label for="work-time" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider">Travail (min)</label>
+                    <input type="number" id="work-time" value="25" min="1" max="120" 
+                        class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-xl font-bold text-lavender focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
+                </div>
+                <div class="flex flex-col items-center w-1/2">
+                    <label for="break-time" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider">Pause (min)</label>
+                    <input type="number" id="break-time" value="5" min="1" max="60" 
+                        class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-xl font-bold text-mint focus:outline-none focus:border-mint focus:ring-1 focus:ring-mint transition-all">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // DOM Elements
+        const timerDisplay = document.getElementById('timer');
+        const statusDisplay = document.getElementById('status');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const workInput = document.getElementById('work-time');
+        const breakInput = document.getElementById('break-time');
+        const videoSelect = document.getElementById('video-select');
+        const videoPlayer = document.getElementById('video-player');
+
+        // State variables
+        let interval;
+        let isRunning = false;
+        let isWorkMode = true; // true = work, false = break
+        let secondsRemaining = 25 * 60;
+
+        // Generate synthetic beep using Web Audio API (no external asset needed)
+        const playBeep = () => {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                // Calm sine wave tone
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.5);
+                
+                // Fade out to avoid clicks
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) {
+                console.error("Audio playback failed", e);
+            }
+        };
+
+        // Load settings from localStorage
+        const loadSettings = () => {
+            const savedWork = localStorage.getItem('pomodoroWorkTime');
+            const savedBreak = localStorage.getItem('pomodoroBreakTime');
+            const savedVideo = localStorage.getItem('pomodoroVideoId');
+            
+            if (savedWork) workInput.value = savedWork;
+            if (savedBreak) breakInput.value = savedBreak;
+            
+            if (savedVideo) {
+                videoSelect.value = savedVideo;
+                updateVideo(savedVideo);
+            }
+            
+            resetTimer();
+        };
+
+        // Save settings to localStorage
+        const saveSettings = () => {
+            localStorage.setItem('pomodoroWorkTime', workInput.value);
+            localStorage.setItem('pomodoroBreakTime', breakInput.value);
+            localStorage.setItem('pomodoroVideoId', videoSelect.value);
+        };
+
+        // Update video iframe
+        const updateVideo = (videoId) => {
+            // Little fade out/in effect
+            videoPlayer.classList.add('opacity-0');
+            setTimeout(() => {
+                videoPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+                videoPlayer.classList.remove('opacity-0');
+            }, 300);
+        };
+
+        // Format time mm:ss
+        const formatTime = (seconds) => {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        };
+
+        // Update UI logic
+        const updateUI = () => {
+            const formatted = formatTime(secondsRemaining);
+            timerDisplay.textContent = formatted;
+            
+            const modeName = isWorkMode ? 'Travail' : 'Pause';
+            document.title = `${formatted} - ${modeName} | Lofi Pomodoro`;
+            
+            statusDisplay.textContent = modeName;
+            
+            if (isWorkMode) {
+                statusDisplay.classList.replace('text-mint', 'text-lavender') || statusDisplay.classList.add('text-lavender');
+            } else {
+                statusDisplay.classList.replace('text-lavender', 'text-mint') || statusDisplay.classList.add('text-mint');
+            }
+
+            // Update button states
+            if (isRunning) {
+                startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                pauseBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                pauseBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        };
+
+        // Switch mode (Work <-> Break)
+        const switchMode = () => {
+            playBeep();
+            isWorkMode = !isWorkMode;
+            const mins = isWorkMode ? parseInt(workInput.value) : parseInt(breakInput.value);
+            secondsRemaining = (isNaN(mins) || mins <= 0 ? (isWorkMode ? 25 : 5) : mins) * 60;
+            updateUI();
+        };
+
+        // Start timer
+        const startTimer = () => {
+            if (isRunning) return;
+            isRunning = true;
+            updateUI(); // Immediately update button styles
+            
+            interval = setInterval(() => {
+                if (secondsRemaining > 0) {
+                    secondsRemaining--;
+                    updateUI();
+                } else {
+                    switchMode();
+                }
+            }, 1000);
+        };
+
+        // Pause timer
+        const pauseTimer = () => {
+            if (!isRunning) return;
+            isRunning = false;
+            clearInterval(interval);
+            updateUI();
+        };
+
+        // Reset timer
+        const resetTimer = () => {
+            pauseTimer();
+            isWorkMode = true;
+            const mins = parseInt(workInput.value);
+            secondsRemaining = (isNaN(mins) || mins <= 0 ? 25 : mins) * 60;
+            updateUI();
+        };
+
+        // Event Listeners
+        startBtn.addEventListener('click', startTimer);
+        pauseBtn.addEventListener('click', pauseTimer);
+        resetBtn.addEventListener('click', resetTimer);
+
+        workInput.addEventListener('input', () => {
+            saveSettings();
+            if (!isRunning && isWorkMode) resetTimer();
+        });
+
+        breakInput.addEventListener('input', () => {
+            saveSettings();
+            if (!isRunning && !isWorkMode) {
+                const mins = parseInt(breakInput.value);
+                secondsRemaining = (isNaN(mins) || mins <= 0 ? 5 : mins) * 60;
+                updateUI();
+            }
+        });
+        
+        videoSelect.addEventListener('change', (e) => {
+            saveSettings();
+            updateVideo(e.target.value);
+        });
+
+        // Initialize App
+        loadSettings();
+    </script>
+</body>
+</html>
