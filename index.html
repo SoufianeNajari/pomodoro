@@ -144,7 +144,7 @@
             <!-- Video Selector -->
             <div class="flex flex-col w-full">
                 <label for="video-select" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider text-center">Ambiance Vidéo</label>
-                <select id="video-select" class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-sm font-bold text-white focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all cursor-pointer">
+                <select id="video-select" class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-sm font-bold text-white focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all cursor-pointer mb-2">
                     <optgroup label="🍅 25/5 (Cycles Courts)">
                         <option value="OS8lnKZdJYc">Pluie à Shibuya (2h)</option>
                         <option value="RJTcqnGPQME">Matinée dorée à Tokyo (2h)</option>
@@ -159,7 +159,15 @@
                         <option value="XrEXSSCRw8w">Matinée d'été au Japon (3h)</option>
                         <option value="86CFyZDqiAI">Vue nocturne de la ville (4h)</option>
                     </optgroup>
+                    <optgroup label="✨ Autre">
+                        <option value="custom">URL YouTube Personnalisée...</option>
+                    </optgroup>
                 </select>
+                <div id="custom-video-container" class="hidden w-full flex gap-2">
+                    <input type="text" id="custom-video-input" placeholder="Lien YouTube (ex: https://youtu.be/...)" 
+                        class="flex-1 bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-[#a1a1aa] focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
+                    <button id="load-custom-video-btn" class="px-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-xl font-bold transition-colors text-[10px]">OK</button>
+                </div>
             </div>
 
             <!-- Volume Control -->
@@ -610,6 +618,7 @@
             const savedBreak = localStorage.getItem('pomodoroBreakTime');
             const savedLongBreak = localStorage.getItem('pomodoroLongBreakTime');
             const savedVideo = localStorage.getItem('pomodoroVideoId');
+            const savedCustomVideoId = localStorage.getItem('pomodoroCustomVideoId');
             const savedTheme = localStorage.getItem('pomodoroThemeId');
             const savedSound = localStorage.getItem('pomodoroSoundId');
             
@@ -619,7 +628,15 @@
             
             if (savedVideo) {
                 videoSelect.value = savedVideo;
-                updateVideo(savedVideo);
+                if (savedVideo === 'custom') {
+                    document.getElementById('custom-video-container').classList.remove('hidden');
+                    if (savedCustomVideoId) {
+                        document.getElementById('custom-video-input').value = `https://youtu.be/${savedCustomVideoId}`;
+                        updateVideo(savedCustomVideoId);
+                    }
+                } else {
+                    updateVideo(savedVideo);
+                }
             }
 
             if (savedTheme) {
@@ -642,6 +659,9 @@
             localStorage.setItem('pomodoroVideoId', videoSelect.value);
             localStorage.setItem('pomodoroThemeId', themeSelect.value);
             localStorage.setItem('pomodoroSoundId', soundSelect.value);
+            if (videoSelect.value === 'custom') {
+                localStorage.setItem('pomodoroCustomVideoId', currentVideoId);
+            }
         };
 
         // Update video player
@@ -836,8 +856,44 @@
         });
         
         videoSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val === 'custom') {
+                document.getElementById('custom-video-container').classList.remove('hidden');
+            } else {
+                document.getElementById('custom-video-container').classList.add('hidden');
+                updateVideo(val);
+            }
             saveSettings();
-            updateVideo(e.target.value);
+        });
+
+        const extractYouTubeId = (url) => {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        };
+
+        const loadCustomVideo = () => {
+            const url = document.getElementById('custom-video-input').value.trim();
+            if (url) {
+                const videoId = extractYouTubeId(url);
+                if (videoId) {
+                    updateVideo(videoId);
+                    saveSettings();
+                } else {
+                    alert("Lien YouTube invalide. Veuillez utiliser un format standard (ex: https://youtu.be/...)");
+                }
+            }
+        };
+
+        document.getElementById('load-custom-video-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            loadCustomVideo();
+        });
+        document.getElementById('custom-video-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                loadCustomVideo();
+            }
         });
 
         themeSelect.addEventListener('change', (e) => {
