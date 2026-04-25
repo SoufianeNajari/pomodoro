@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>25:00 - Travail | Lofi Pomodoro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
         body {
@@ -86,50 +87,55 @@
         }
     </script>
 </head>
-<body class="bg-[#1e1e1e] text-white min-h-screen flex flex-col items-center justify-center p-4 transition-colors duration-500" id="body">
+<body class="bg-[#1e1e1e] text-white min-h-screen flex flex-col items-center justify-center p-2 transition-colors duration-500" id="body">
 
     <!-- Lofi Girl Video -->
-    <div id="video-container" class="w-full max-w-2xl aspect-video mb-8 transition-all duration-700 z-0">
-        <iframe id="video-player" class="w-full h-full rounded-2xl shadow-lg shadow-black/50 transition-opacity duration-500" 
-            src="https://www.youtube.com/embed/OS8lnKZdJYc?autoplay=1&mute=1" 
-            title="Lofi Girl" frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            allowfullscreen>
-        </iframe>
+    <div id="video-container" class="w-full max-w-sm aspect-video mb-2 transition-all duration-700 z-0">
+        <div id="video-player" class="w-full h-full rounded-2xl shadow-lg shadow-black/50 transition-opacity duration-500"></div>
     </div>
 
     <!-- Timer App -->
-    <div id="timer-app" class="w-full max-w-md bg-[#2a2a2a] rounded-3xl p-8 shadow-2xl border border-[#3d3d3d] flex flex-col items-center relative transition-all duration-500 z-10">
+    <div id="timer-app" class="w-full max-w-md bg-[#2a2a2a] rounded-3xl p-6 shadow-2xl border border-[#3d3d3d] flex flex-col items-center relative transition-all duration-500 z-10">
         
+        <!-- Level & XP Bar -->
+        <div class="w-full mb-4 mt-6 flex flex-col gap-2">
+            <div class="flex justify-between items-center px-1">
+                <span id="level-display" class="text-[10px] font-bold text-lavender uppercase tracking-widest">Niveau 1</span>
+                <span id="xp-display" class="text-[10px] font-bold text-[#a1a1aa] uppercase tracking-widest">0 / 100 XP</span>
+            </div>
+            <div class="w-full h-1 bg-[#1e1e1e] rounded-full overflow-hidden border border-[#3d3d3d]">
+                <div id="xp-bar" class="h-full bg-gradient-to-r from-lavender to-mint transition-all duration-1000" style="width: 0%"></div>
+            </div>
+        </div>
         <!-- Fullscreen Button -->
         <button id="fullscreen-btn" class="absolute top-6 left-6 text-[#a1a1aa] hover:text-white transition-colors" title="Mode Immersif">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
             </svg>
         </button>
 
         <!-- Stats Button -->
         <button id="stats-btn" class="absolute top-6 right-6 text-[#a1a1aa] hover:text-white transition-colors" title="Statistiques">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
         </button>
         
         <!-- Status Indicator -->
-        <div id="status" class="text-xl font-bold mb-4 text-lavender uppercase tracking-widest transition-colors duration-300">
+        <div id="status" class="text-lg font-bold mb-2 text-lavender uppercase tracking-widest transition-colors duration-300">
             Travail
         </div>
 
         <!-- Timer Display -->
-        <div id="timer" class="text-7xl font-bold mb-8 text-white tracking-tighter">
+        <div id="timer" class="text-6xl font-bold mb-4 text-white tracking-tighter">
             25:00
         </div>
 
         <!-- Controls -->
-        <div class="flex gap-4 mb-8">
-            <button id="start-btn" class="px-6 py-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-full font-bold transition-colors">Start</button>
-            <button id="pause-btn" class="px-6 py-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-full font-bold transition-colors">Pause</button>
-            <button id="reset-btn" class="px-6 py-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-[#a1a1aa] rounded-full font-bold transition-colors">Reset</button>
+        <div class="flex gap-4 mb-6">
+            <button id="start-btn" class="px-5 py-2 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-full font-bold transition-colors text-sm">Start</button>
+            <button id="pause-btn" class="px-5 py-2 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-full font-bold transition-colors text-sm">Pause</button>
+            <button id="reset-btn" class="px-5 py-2 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-[#a1a1aa] rounded-full font-bold transition-colors text-sm">Reset</button>
         </div>
 
         <!-- Settings -->
@@ -156,6 +162,37 @@
                 </select>
             </div>
 
+            <!-- Volume Control -->
+            <div class="w-full grid grid-cols-2 gap-3 mb-2">
+                <div class="flex flex-col items-center gap-1 bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3">
+                    <div class="flex items-center justify-between w-full">
+                        <span class="text-[9px] text-[#a1a1aa] font-bold uppercase tracking-widest">Vidéo</span>
+                        <span id="volume-value" class="text-[9px] text-lavender font-bold">50%</span>
+                    </div>
+                    <input type="range" id="volume-slider" min="0" max="100" value="50" 
+                        class="w-full h-1 bg-[#3d3d3d] rounded-lg appearance-none cursor-pointer accent-lavender hover:accent-mint transition-all">
+                </div>
+                <div class="flex flex-col items-center gap-1 bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3">
+                    <div class="flex items-center justify-between w-full">
+                        <span class="text-[9px] text-[#a1a1aa] font-bold uppercase tracking-widest">Ambiance</span>
+                    </div>
+                    <div class="flex gap-3 w-full justify-center">
+                        <button id="rain-toggle" title="Pluie" class="p-1.5 rounded-lg bg-[#3d3d3d] text-[#a1a1aa] hover:bg-[#4d4d4d] transition-all">
+                            <!-- Rain Icon (Drops) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M3 12h-1m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707" />
+                            </svg>
+                        </button>
+                        <button id="wind-toggle" title="Vent" class="p-1.5 rounded-lg bg-[#3d3d3d] text-[#a1a1aa] hover:bg-[#4d4d4d] transition-all">
+                            <!-- Wind Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Customization (Theme & Sound) -->
             <div class="w-full flex justify-between gap-6">
                 <div class="flex flex-col w-1/2">
@@ -177,38 +214,53 @@
                 </div>
             </div>
 
+            <!-- Notifications Toggle -->
+            <div class="w-full flex items-center justify-center gap-4 mb-2">
+                <span class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider">Notifications</span>
+                <button id="notif-toggle" class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none bg-[#3d3d3d]">
+                    <span id="notif-toggle-dot" class="inline-block w-4 h-4 transform bg-white rounded-full transition-transform translate-x-1"></span>
+                </button>
+            </div>
+
             <!-- Time Inputs -->
-            <div class="w-full flex justify-between gap-6">
-                <div class="flex flex-col items-center w-1/2">
-                    <label for="work-time" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider">Travail (min)</label>
+            <div class="w-full grid grid-cols-3 gap-4">
+                <div class="flex flex-col items-center">
+                    <label for="work-time" class="text-[10px] text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider text-center">Travail</label>
                     <input type="number" id="work-time" value="25" min="1" max="120" 
-                        class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-xl font-bold text-lavender focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
+                        class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-lg font-bold text-lavender focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
                 </div>
-                <div class="flex flex-col items-center w-1/2">
-                    <label for="break-time" class="text-sm text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider">Pause (min)</label>
+                <div class="flex flex-col items-center">
+                    <label for="break-time" class="text-[10px] text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider text-center">Pause</label>
                     <input type="number" id="break-time" value="5" min="1" max="60" 
-                        class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-xl font-bold text-mint focus:outline-none focus:border-mint focus:ring-1 focus:ring-mint transition-all">
+                        class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-lg font-bold text-mint focus:outline-none focus:border-mint focus:ring-1 focus:ring-mint transition-all">
+                </div>
+                <div class="flex flex-col items-center">
+                    <label for="long-break-time" class="text-[10px] text-[#a1a1aa] mb-2 font-bold uppercase tracking-wider text-center">Longue</label>
+                    <input type="number" id="long-break-time" value="15" min="1" max="60" 
+                        class="w-full bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl p-3 text-center text-lg font-bold text-blue-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition-all">
                 </div>
             </div>
             
             <!-- Tasks List -->
-            <div id="todo-section" class="w-full border-t border-[#3d3d3d] pt-6 flex flex-col gap-4 transition-all duration-300">
+            <div id="todo-section" class="w-full border-t border-[#3d3d3d] pt-4 flex flex-col gap-3 transition-all duration-300">
                 <div class="flex items-center justify-between">
-                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider">Tâches</div>
-                    <div id="active-task-display" class="text-xs font-bold text-lavender max-w-[180px] truncate hidden" title="Tâche en cours"></div>
+                    <div class="text-xs text-[#a1a1aa] font-bold uppercase tracking-wider">Tâches</div>
+                    <div id="active-task-display" class="text-[10px] font-bold text-lavender max-w-[150px] truncate hidden" title="Tâche en cours"></div>
                 </div>
                 
                 <form id="todo-form" class="flex gap-2">
                     <input type="text" id="todo-input" placeholder="Ajouter une tâche..." autocomplete="off"
-                        class="flex-1 bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl px-4 py-3 text-sm font-bold text-white placeholder-[#a1a1aa] focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
-                    <button type="submit" class="px-4 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-xl font-bold transition-colors flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        class="flex-1 bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-[#a1a1aa] focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
+                    <input type="number" id="todo-goal" value="1" min="1" max="10" title="Objectif"
+                        class="w-10 bg-[#1e1e1e] border border-[#3d3d3d] rounded-xl text-center text-xs font-bold text-white focus:outline-none focus:border-lavender focus:ring-1 focus:ring-lavender transition-all">
+                    <button type="submit" class="px-3 bg-[#3d3d3d] hover:bg-[#4d4d4d] text-white rounded-xl font-bold transition-colors flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                         </svg>
                     </button>
                 </form>
                 
-                <ul id="todo-list" class="flex flex-col gap-2 max-h-36 overflow-y-auto pr-1 space-y-1">
+                <ul id="todo-list" class="flex flex-col gap-2 max-h-24 overflow-y-auto pr-1 space-y-1">
                     <!-- Tasks will be rendered here -->
                 </ul>
             </div>
@@ -226,14 +278,25 @@
             </button>
             <h2 class="text-2xl font-bold mb-6 text-white text-center tracking-wide">Statistiques</h2>
             
-            <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="grid grid-cols-2 gap-4 mb-4">
                 <div class="bg-[#1e1e1e] rounded-2xl p-4 border border-[#3d3d3d] flex flex-col items-center justify-center">
-                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1">Temps Total</div>
+                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1 text-center">Temps Total</div>
                     <div id="total-time-stat" class="text-3xl font-bold text-lavender">0m</div>
                 </div>
                 <div class="bg-[#1e1e1e] rounded-2xl p-4 border border-[#3d3d3d] flex flex-col items-center justify-center">
-                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1">Cycles Complétés</div>
+                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1 text-center">Cycles</div>
                     <div id="total-cycles-stat" class="text-3xl font-bold text-mint">0</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-[#1e1e1e] rounded-2xl p-4 border border-[#3d3d3d] flex flex-col items-center justify-center">
+                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1 text-center">Série (Jours)</div>
+                    <div id="streak-stat" class="text-3xl font-bold text-orange-400">0</div>
+                </div>
+                <div class="bg-[#1e1e1e] rounded-2xl p-4 border border-[#3d3d3d] flex flex-col items-center justify-center">
+                    <div class="text-sm text-[#a1a1aa] font-bold uppercase tracking-wider mb-1 text-center">Aujourd'hui</div>
+                    <div id="today-time-stat" class="text-3xl font-bold text-blue-400">0m</div>
                 </div>
             </div>
 
@@ -243,6 +306,12 @@
             </div>
             <div class="flex items-end justify-between gap-2 px-2 mt-2 text-xs text-[#a1a1aa] font-bold" id="chart-labels">
                 <!-- Labels -->
+            </div>
+
+            <div class="mt-8 flex justify-center">
+                <button id="reset-stats-btn" class="text-[10px] text-[#a1a1aa] hover:text-[#ef4444] uppercase tracking-widest transition-colors font-bold">
+                    Réinitialiser les statistiques
+                </button>
             </div>
         </div>
     </div>
@@ -256,8 +325,50 @@
         const resetBtn = document.getElementById('reset-btn');
         const workInput = document.getElementById('work-time');
         const breakInput = document.getElementById('break-time');
+        const longBreakInput = document.getElementById('long-break-time');
         const videoSelect = document.getElementById('video-select');
         const videoPlayer = document.getElementById('video-player');
+        let player; // YouTube Player instance
+        let currentVideoId = 'OS8lnKZdJYc';
+
+        // Initialize YouTube Player
+        window.onYouTubeIframeAPIReady = () => {
+            player = new YT.Player('video-player', {
+                height: '100%',
+                width: '100%',
+                videoId: currentVideoId,
+                playerVars: {
+                    'autoplay': 1,
+                    'mute': 1,
+                    'controls': 1,
+                    'loop': 1,
+                    'playlist': currentVideoId // Required for looping
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        };
+
+        const onPlayerReady = (event) => {
+            const savedVolume = parseInt(localStorage.getItem('pomodoroVolume') || 50, 10);
+            const volumeSlider = document.getElementById('volume-slider');
+            const volumeValue = document.getElementById('volume-value');
+            
+            volumeSlider.value = savedVolume;
+            volumeValue.textContent = `${savedVolume}%`;
+            
+            event.target.unMute();
+            event.target.setVolume(savedVolume);
+            event.target.playVideo();
+            
+            // Ensure volume is enforced after a slight delay (some browsers/YT API quirks)
+            setTimeout(() => {
+                if (event.target && event.target.setVolume) {
+                    event.target.setVolume(savedVolume);
+                }
+            }, 1000);
+        };
         const themeSelect = document.getElementById('theme-select');
         const soundSelect = document.getElementById('sound-select');
         
@@ -271,9 +382,160 @@
         let interval;
         let isRunning = false;
         let isWorkMode = true; // true = work, false = break
+        let isLongBreakMode = false;
+        let completedWorkSessions = 0;
         let secondsRemaining = 25 * 60;
         let tasks = JSON.parse(localStorage.getItem('pomodoroTasks')) || [];
         let activeTaskId = localStorage.getItem('pomodoroActiveTaskId') || null;
+        let notificationsEnabled = localStorage.getItem('pomodoroNotifications') === 'true';
+        let userXP = parseInt(localStorage.getItem('pomodoroXP')) || 0;
+        let userLevel = parseInt(localStorage.getItem('pomodoroLevel')) || 1;
+
+        const updateXPUI = () => {
+            const xpForNextLevel = userLevel * 100;
+            const xpProgress = (userXP / xpForNextLevel) * 100;
+            
+            document.getElementById('level-display').textContent = `Niveau ${userLevel}`;
+            document.getElementById('xp-display').textContent = `${userXP} / ${xpForNextLevel} XP`;
+            document.getElementById('xp-bar').style.width = `${xpProgress}%`;
+        };
+
+        const addXP = (amount) => {
+            userXP += amount;
+            const xpForNextLevel = userLevel * 100;
+            
+            if (userXP >= xpForNextLevel) {
+                userXP -= xpForNextLevel;
+                userLevel++;
+                sendNotification("Niveau Supérieur !", `Félicitations ! Vous avez atteint le niveau ${userLevel}.`);
+            }
+            
+            localStorage.setItem('pomodoroXP', userXP);
+            localStorage.setItem('pomodoroLevel', userLevel);
+            updateXPUI();
+        };
+
+        const updateNotifUI = () => {
+            const toggle = document.getElementById('notif-toggle');
+            const dot = document.getElementById('notif-toggle-dot');
+            if (notificationsEnabled) {
+                toggle.classList.replace('bg-[#3d3d3d]', 'bg-mint');
+                dot.classList.replace('translate-x-1', 'translate-x-6');
+            } else {
+                toggle.classList.replace('bg-mint', 'bg-[#3d3d3d]');
+                dot.classList.replace('translate-x-6', 'translate-x-1');
+            }
+        };
+
+        const sendNotification = (title, body) => {
+            if (notificationsEnabled && Notification.permission === "granted") {
+                new Notification(title, { body, icon: 'https://cdn-icons-png.flaticon.com/512/2522/2522625.png' });
+            }
+        };
+
+        // Ambient Sound Logic
+        let audioCtx;
+        const ambientSounds = {
+            rain: { node: null, gain: null, enabled: false },
+            wind: { node: null, gain: null, enabled: false }
+        };
+
+        const initAudioCtx = () => {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        };
+
+        const createNoiseNode = () => {
+            const bufferSize = 2 * audioCtx.sampleRate;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+            return whiteNoise;
+        };
+
+        const toggleAmbient = (type) => {
+            initAudioCtx();
+            const sound = ambientSounds[type];
+            const btn = document.getElementById(`${type}-toggle`);
+
+            if (sound.enabled) {
+                sound.gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+                setTimeout(() => {
+                    if (sound.node) {
+                        sound.node.stop();
+                        sound.node = null;
+                    }
+                }, 1000);
+                sound.enabled = false;
+                btn.classList.replace('text-lavender', 'text-[#a1a1aa]');
+                btn.classList.replace('bg-lavender/10', 'bg-[#3d3d3d]');
+            } else {
+                const noise = createNoiseNode();
+                const gain = audioCtx.createGain();
+                const filter = audioCtx.createBiquadFilter();
+
+                if (type === 'wind') {
+                    filter.type = 'lowpass';
+                    filter.frequency.value = 400;
+                    gain.gain.value = 0.15;
+                } else if (type === 'rain') {
+                    filter.type = 'bandpass';
+                    filter.frequency.value = 500;
+                    filter.Q.value = 0.5;
+                    gain.gain.value = 0.1;
+                    
+                    // Add wind modulation
+                    const lfo = audioCtx.createOscillator();
+                    lfo.type = 'sine';
+                    lfo.frequency.value = 0.2;
+                    const lfoGain = audioCtx.createGain();
+                    lfoGain.gain.value = 300;
+                    lfo.connect(lfoGain);
+                    lfoGain.connect(filter.frequency);
+                    lfo.start();
+                }
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(type === 'rain' ? 0.15 : 0.1, audioCtx.currentTime + 1);
+
+                noise.start();
+                sound.node = noise;
+                sound.gain = gain;
+                sound.enabled = true;
+                
+                btn.classList.replace('text-[#a1a1aa]', 'text-lavender');
+                btn.classList.replace('bg-[#3d3d3d]', 'bg-lavender/10');
+            }
+        };
+
+        document.getElementById('rain-toggle').addEventListener('click', () => toggleAmbient('rain'));
+        document.getElementById('wind-toggle').addEventListener('click', () => toggleAmbient('wind'));
+
+        document.getElementById('notif-toggle').addEventListener('click', () => {
+            if (!notificationsEnabled) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        notificationsEnabled = true;
+                        localStorage.setItem('pomodoroNotifications', 'true');
+                        updateNotifUI();
+                    }
+                });
+            } else {
+                notificationsEnabled = false;
+                localStorage.setItem('pomodoroNotifications', 'false');
+                updateNotifUI();
+            }
+        });
 
         const updateTheme = (themeName) => {
             const root = document.documentElement;
@@ -346,12 +608,14 @@
         const loadSettings = () => {
             const savedWork = localStorage.getItem('pomodoroWorkTime');
             const savedBreak = localStorage.getItem('pomodoroBreakTime');
+            const savedLongBreak = localStorage.getItem('pomodoroLongBreakTime');
             const savedVideo = localStorage.getItem('pomodoroVideoId');
             const savedTheme = localStorage.getItem('pomodoroThemeId');
             const savedSound = localStorage.getItem('pomodoroSoundId');
             
             if (savedWork) workInput.value = savedWork;
             if (savedBreak) breakInput.value = savedBreak;
+            if (savedLongBreak) longBreakInput.value = savedLongBreak;
             
             if (savedVideo) {
                 videoSelect.value = savedVideo;
@@ -374,20 +638,34 @@
         const saveSettings = () => {
             localStorage.setItem('pomodoroWorkTime', workInput.value);
             localStorage.setItem('pomodoroBreakTime', breakInput.value);
+            localStorage.setItem('pomodoroLongBreakTime', longBreakInput.value);
             localStorage.setItem('pomodoroVideoId', videoSelect.value);
             localStorage.setItem('pomodoroThemeId', themeSelect.value);
             localStorage.setItem('pomodoroSoundId', soundSelect.value);
         };
 
-        // Update video iframe
+        // Update video player
         const updateVideo = (videoId) => {
-            // Little fade out/in effect
-            videoPlayer.classList.add('opacity-0');
-            setTimeout(() => {
-                videoPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
-                videoPlayer.classList.remove('opacity-0');
-            }, 300);
+            currentVideoId = videoId;
+            if (player && player.loadVideoById) {
+                player.loadVideoById({
+                    videoId: videoId,
+                    suggestedQuality: 'hd720'
+                });
+            }
         };
+
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeValue = document.getElementById('volume-value');
+
+        volumeSlider.addEventListener('input', (e) => {
+            const vol = e.target.value;
+            volumeValue.textContent = `${vol}%`;
+            if (player && player.setVolume) {
+                player.setVolume(vol);
+            }
+            localStorage.setItem('pomodoroVolume', vol);
+        });
 
         // Format time mm:ss
         const formatTime = (seconds) => {
@@ -401,15 +679,25 @@
             const formatted = formatTime(secondsRemaining);
             timerDisplay.textContent = formatted;
             
-            const modeName = isWorkMode ? 'Travail' : 'Pause';
-            document.title = `${formatted} - ${modeName} | Lofi Pomodoro`;
+            let modeName = 'Travail';
+            if (!isWorkMode) {
+                modeName = isLongBreakMode ? 'Longue Pause' : 'Pause';
+            }
             
+            document.title = `${formatted} - ${modeName} | Lofi Pomodoro`;
             statusDisplay.textContent = modeName;
             
+            // Clear existing color classes
+            statusDisplay.classList.remove('text-lavender', 'text-mint', 'text-blue-400');
+            
             if (isWorkMode) {
-                statusDisplay.classList.replace('text-mint', 'text-lavender') || statusDisplay.classList.add('text-lavender');
+                statusDisplay.classList.add('text-lavender');
             } else {
-                statusDisplay.classList.replace('text-lavender', 'text-mint') || statusDisplay.classList.add('text-mint');
+                if (isLongBreakMode) {
+                    statusDisplay.classList.add('text-blue-400');
+                } else {
+                    statusDisplay.classList.add('text-mint');
+                }
             }
 
             // Update button states
@@ -425,10 +713,63 @@
         // Switch mode (Work <-> Break)
         const switchMode = () => {
             playBeep();
-            isWorkMode = !isWorkMode;
-            const mins = isWorkMode ? parseInt(workInput.value) : parseInt(breakInput.value);
-            secondsRemaining = (isNaN(mins) || mins <= 0 ? (isWorkMode ? 25 : 5) : mins) * 60;
+            
+            if (isWorkMode) {
+                // A work session just finished
+                const workMins = parseInt(workInput.value) || 25;
+                updateHistory(workMins);
+                
+                completedWorkSessions++;
+                addXP(workMins); // 1 XP per minute worked
+                
+                // Increment pomodoro count for active task
+                if (activeTaskId) {
+                    const task = tasks.find(t => t.id === activeTaskId);
+                    if (task) {
+                        task.pomodoros = (task.pomodoros || 0) + 1;
+                        saveTasks();
+                        renderTasks();
+                    }
+                }
+
+                isWorkMode = false;
+                // Every 4 sessions, take a long break
+                if (completedWorkSessions % 4 === 0) {
+                    isLongBreakMode = true;
+                    const longMins = parseInt(longBreakInput.value) || 15;
+                    secondsRemaining = longMins * 60;
+                    sendNotification("C'est l'heure de la longue pause !", "Bravo, vous avez complété 4 sessions ! Profitez de " + longMins + " minutes de repos.");
+                } else {
+                    isLongBreakMode = false;
+                    const breakMins = parseInt(breakInput.value) || 5;
+                    secondsRemaining = breakMins * 60;
+                    sendNotification("C'est l'heure de la pause !", "Petite pause de " + breakMins + " minutes bien méritée.");
+                }
+            } else {
+                // A break session just finished
+                isWorkMode = true;
+                isLongBreakMode = false;
+                const workMins = parseInt(workInput.value) || 25;
+                secondsRemaining = workMins * 60;
+                sendNotification("C'est l'heure de se concentrer !", "Nouvelle session de " + workMins + " minutes. C'est parti !");
+            }
+
             updateUI();
+        };
+
+        const updateHistory = (duration) => {
+            const history = JSON.parse(localStorage.getItem('pomodoroHistory')) || {};
+            const today = new Date();
+            const dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+            
+            if (!history[dateStr]) {
+                history[dateStr] = { cycles: 0, duration: 0 };
+            }
+            
+            history[dateStr].cycles += 1;
+            history[dateStr].duration += duration;
+            
+            localStorage.setItem('pomodoroHistory', JSON.stringify(history));
         };
 
         // Start timer
@@ -459,6 +800,8 @@
         const resetTimer = () => {
             pauseTimer();
             isWorkMode = true;
+            isLongBreakMode = false;
+            completedWorkSessions = 0;
             const mins = parseInt(workInput.value);
             secondsRemaining = (isNaN(mins) || mins <= 0 ? 25 : mins) * 60;
             updateUI();
@@ -476,9 +819,18 @@
 
         breakInput.addEventListener('input', () => {
             saveSettings();
-            if (!isRunning && !isWorkMode) {
+            if (!isRunning && !isWorkMode && !isLongBreakMode) {
                 const mins = parseInt(breakInput.value);
                 secondsRemaining = (isNaN(mins) || mins <= 0 ? 5 : mins) * 60;
+                updateUI();
+            }
+        });
+
+        longBreakInput.addEventListener('input', () => {
+            saveSettings();
+            if (!isRunning && !isWorkMode && isLongBreakMode) {
+                const mins = parseInt(longBreakInput.value);
+                secondsRemaining = (isNaN(mins) || mins <= 0 ? 15 : mins) * 60;
                 updateUI();
             }
         });
@@ -496,6 +848,31 @@
         soundSelect.addEventListener('change', () => {
             saveSettings();
             playBeep(); // test the sound
+        });
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ignore if user is typing in an input
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                return;
+            }
+
+            const key = e.key.toLowerCase();
+            
+            if (key === ' ') { // Space
+                e.preventDefault();
+                if (isRunning) pauseTimer();
+                else startTimer();
+            } else if (key === 'r') { // R to Reset
+                resetTimer();
+            } else if (key === 's') { // S for Stats
+                const statsModal = document.getElementById('stats-modal');
+                if (statsModal.classList.contains('opacity-0')) {
+                    openStats();
+                } else {
+                    closeStats();
+                }
+            }
         });
 
         // To-Do List Logic
@@ -525,11 +902,43 @@
 
         const renderTasks = () => {
             todoList.innerHTML = '';
-            tasks.forEach(task => {
+            tasks.forEach((task, index) => {
                 const li = document.createElement('li');
                 const isActive = task.id === activeTaskId;
-                li.className = `group flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer ${task.completed ? 'bg-[#1e1e1e] opacity-60 border-[#3d3d3d]' : (isActive ? 'bg-[#3d3d3d] border-lavender' : 'bg-[#1e1e1e] border-[#3d3d3d] hover:bg-[#2a2a2a]')}`;
+                li.className = `group flex items-center justify-between p-3 rounded-xl border transition-all cursor-grab active:cursor-grabbing ${task.completed ? 'bg-[#1e1e1e] opacity-60 border-[#3d3d3d]' : (isActive ? 'bg-[#3d3d3d] border-lavender' : 'bg-[#1e1e1e] border-[#3d3d3d] hover:bg-[#2a2a2a]')}`;
+                li.draggable = true;
                 
+                // Drag & Drop Listeners
+                li.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', index);
+                    li.classList.add('opacity-40');
+                });
+
+                li.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    li.classList.add('border-t-lavender', 'border-t-2');
+                });
+
+                li.addEventListener('dragleave', () => {
+                    li.classList.remove('border-t-lavender', 'border-t-2');
+                });
+
+                li.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const fromIndex = e.dataTransfer.getData('text/plain');
+                    const toIndex = index;
+                    
+                    const movedTask = tasks.splice(fromIndex, 1)[0];
+                    tasks.splice(toIndex, 0, movedTask);
+                    
+                    saveTasks();
+                    renderTasks();
+                });
+
+                li.addEventListener('dragend', () => {
+                    li.classList.remove('opacity-40');
+                });
+
                 // Left side: Checkbox + Text
                 const leftDiv = document.createElement('div');
                 leftDiv.className = 'flex items-center gap-3 overflow-hidden flex-1';
@@ -552,8 +961,23 @@
                 textSpan.className = `text-sm font-bold truncate transition-all ${task.completed ? 'text-[#a1a1aa] line-through' : 'text-white'}`;
                 textSpan.textContent = task.text;
                 
+                const pomodoroCount = document.createElement('span');
+                pomodoroCount.className = `text-[10px] ml-2 px-1.5 py-0.5 rounded bg-[#2a2a2a] text-[#a1a1aa] font-mono ${task.completed ? 'hidden' : ''}`;
+                const current = task.pomodoros || 0;
+                const goal = task.goal || 1;
+                pomodoroCount.textContent = `${current}/${goal}`;
+                pomodoroCount.title = `Progression : ${current} sur ${goal} pomodoros estimés`;
+                if (current >= goal && goal > 0) {
+                    pomodoroCount.classList.replace('text-[#a1a1aa]', 'text-mint');
+                }
+
+                const textWrapper = document.createElement('div');
+                textWrapper.className = 'flex items-center overflow-hidden';
+                textWrapper.appendChild(textSpan);
+                textWrapper.appendChild(pomodoroCount);
+                
                 leftDiv.appendChild(checkbox);
-                leftDiv.appendChild(textSpan);
+                leftDiv.appendChild(textWrapper);
                 
                 // Right side: Delete button
                 const deleteBtn = document.createElement('button');
@@ -587,11 +1011,14 @@
         todoForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const text = todoInput.value.trim();
+            const goal = parseInt(document.getElementById('todo-goal').value) || 1;
             if (text) {
                 const newTask = {
                     id: Date.now().toString(),
                     text: text,
-                    completed: false
+                    completed: false,
+                    pomodoros: 0,
+                    goal: goal
                 };
                 tasks.push(newTask);
                 
@@ -600,6 +1027,7 @@
                 }
                 
                 todoInput.value = '';
+                document.getElementById('todo-goal').value = '1';
                 saveTasks();
                 renderTasks();
                 todoList.scrollTop = todoList.scrollHeight; // Scroll to bottom
@@ -652,6 +1080,34 @@
             document.getElementById('total-time-stat').textContent = totalHours > 0 ? `${totalHours}h ${totalMins}m` : `${totalMins}m`;
             document.getElementById('total-cycles-stat').textContent = totalCycles;
 
+            // Today's Time
+            const todayDate = new Date();
+            const todayStr = todayDate.getFullYear() + '-' + String(todayDate.getMonth() + 1).padStart(2, '0') + '-' + String(todayDate.getDate()).padStart(2, '0');
+            const todayDuration = history[todayStr] ? history[todayStr].duration : 0;
+            const todayHours = Math.floor(todayDuration / 60);
+            const todayMins = todayDuration % 60;
+            document.getElementById('today-time-stat').textContent = todayHours > 0 ? `${todayHours}h ${todayMins}m` : `${todayMins}m`;
+
+            // Streak calculation
+            let streak = 0;
+            let checkDate = new Date();
+            while (true) {
+                const checkStr = checkDate.getFullYear() + '-' + String(checkDate.getMonth() + 1).padStart(2, '0') + '-' + String(checkDate.getDate()).padStart(2, '0');
+                if (history[checkStr] && history[checkStr].duration > 0) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    // If it's not today and no duration, streak ends
+                    // If it is today and no duration, check yesterday
+                    if (checkStr === todayStr) {
+                        checkDate.setDate(checkDate.getDate() - 1);
+                        continue;
+                    }
+                    break;
+                }
+            }
+            document.getElementById('streak-stat').textContent = streak;
+
             const chartContainer = document.getElementById('chart-container');
             const chartLabels = document.getElementById('chart-labels');
             chartContainer.innerHTML = '';
@@ -659,8 +1115,6 @@
 
             const days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
             const last7Days = [];
-            const todayDate = new Date();
-            const todayStr = todayDate.getFullYear() + '-' + String(todayDate.getMonth() + 1).padStart(2, '0') + '-' + String(todayDate.getDate()).padStart(2, '0');
             
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
@@ -713,8 +1167,21 @@
             statsModalContent.classList.add('scale-95');
         };
 
+        const resetStats = () => {
+            if (confirm('Voulez-vous vraiment réinitialiser toutes vos statistiques ? Cette action est irréversible.')) {
+                localStorage.removeItem('pomodoroHistory');
+                // Also reset pomodoros on tasks
+                tasks.forEach(task => task.pomodoros = 0);
+                saveTasks();
+                renderTasks();
+                renderStats();
+            }
+        };
+
         if(statsBtn) statsBtn.addEventListener('click', openStats);
         if(closeStatsBtn) closeStatsBtn.addEventListener('click', closeStats);
+        const resetStatsBtn = document.getElementById('reset-stats-btn');
+        if(resetStatsBtn) resetStatsBtn.addEventListener('click', resetStats);
         if(statsModal) statsModal.addEventListener('click', (e) => {
             if (e.target === statsModal) closeStats();
         });
@@ -722,6 +1189,8 @@
         // Initialize App
         loadSettings();
         renderTasks();
+        updateNotifUI();
+        updateXPUI();
     </script>
 </body>
 </html>
